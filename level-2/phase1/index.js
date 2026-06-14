@@ -5,6 +5,9 @@ import dns from "dns";
 import User from "./models/user.js";
 import Redis from "ioredis";
 import { stringify } from "querystring";
+import ratelimmiter from "./middleware/ratelimmiter.js";
+import { sendEmail } from "./lib/sendEmail.js";
+import emailQueue from "./queue.js";
 
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
 
@@ -13,6 +16,8 @@ dotenv.config();
 const app = express();
 
 const redis = new Redis(process.env.REDIS_URL);
+
+export default redis;
 
 app.use(express.json());
 
@@ -33,14 +38,17 @@ app.post("/create", async (req, res) => {
     email,
     password,
   });
-  return res.json(user);
-}); 
-app.get("/get", async (req, res) => {
+
+  await emailQueue.add("send-email", { email });
+
+  return res.json({ user, message: "successfully signup" });
+});
+app.get("/get", ratelimmiter, async (req, res) => {
   const user = await User.find({});
   return res.json(user);
 });
 
-app.get("/get-with-redis", async (req, res) => {
+app.get("/get-with-redis", ratelimmiter, async (req, res) => {
   const cached = await redis.get("user:all");
 
   if (cached) {
@@ -56,7 +64,7 @@ app.get("/get-with-redis", async (req, res) => {
 });
 
 app.post("/send-otp", async (req, res) => {
-  const {email} = req.body;
+  const { email } = req.body;
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   await redis.set(`otp:${email}`, otp, "EX", 100);
