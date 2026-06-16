@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { setServers } from "dns";
 import dns from "dns";
 // import User from "../auth copy/models/user/user.js";
+import proxy from "express-http-proxy";
 
 dotenv.config();
 
@@ -20,9 +21,13 @@ const PORT = process.env.PORT || 6000;
 
 app.get("/", (req, res) => {
   return res.json({
-    message: `hello from product  ${process.env.SERVER_NAME} `,
+    message: `hello from api gateway ${process.env.SERVER_NAME} `,
   });
 });
+
+app.use("/auth", proxy("http://auth-service:5000"));
+app.use("/payment", proxy("http://payment-service:6000"));
+app.use("/product", proxy("http://product-service:7000"));
 
 // app.post("/create", async (req, res) => {
 //   const { name, email, password } = req.body;
