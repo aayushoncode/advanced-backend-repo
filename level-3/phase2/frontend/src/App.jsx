@@ -1,7 +1,13 @@
 import React from "react";
 
 const App = () => {
-  return <div className="bg-red-800 h-400">this is app</div>;
+  return (
+    <div>
+      <div>
+        hey this is app file and we are studying the system design okay...
+      </div>
+    </div>
+  );
 };
 
 export default App;
