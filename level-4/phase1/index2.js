@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import {
   Annotation,
+  MemorySaver,
   MessagesAnnotation,
   StateGraph,
 } from "@langchain/langgraph";
@@ -30,6 +31,8 @@ const tools = [tool];
 
 const toolnode = new ToolNode(tools);
 
+const checkPointer = new MemorySaver();
+
 const llm = new ChatGroq({
   model: "llama-3.3-70b-versatile",
   temperature: 0,
@@ -41,8 +44,15 @@ const callLLM = async (state) => {
   const response = await llm.invoke([
     {
       role: "system",
-      content:
-        "you are ai assistant and your name is jarvis and if you don't know the answer call relevent tool",
+      content: `you are jarvis an ai assistant 
+        use conversation memory first 
+        
+        only use tools when the answer requires
+        external realtime information like :
+        weather, news, web search, stock prices etc...
+        
+        do not call tools for simple conversation , memory
+        based question , greetings, or personal context`,
     },
 
     ...state.messages,
@@ -71,19 +81,24 @@ const graph = new StateGraph(MessagesAnnotation)
   .addEdge("__start__", "agent")
   .addEdge("tools", "agent")
   .addConditionalEdges("agent", shouldContinue)
-  .compile();
+  .compile({ checkpointer: checkPointer });
 
 app.post("/ai", async (req, res) => {
   const { input } = req.body;
 
-  const response = await graph.invoke({
-    messages: [
-      {
-        role: "user",
-        content: input,
-      },
-    ],
-  });
+  const response = await graph.invoke(
+    {
+      messages: [
+        {
+          role: "user",
+          content: input,
+        },
+      ],
+    },
+    {
+      configurable: { thread_id: "123kdjf" },
+    },
+  );
 
   console.log(response.messages[response.messages.length - 1].content);
 
