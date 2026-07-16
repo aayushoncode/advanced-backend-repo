@@ -35,33 +35,34 @@ const embeddings = new GoogleGenerativeAIEmbeddings({
   title: "Document title",
 });
 
-  const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
-    url: process.env.QDRANT_URL,
-    collectionName: "grocery-store",
-  });
+const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+  url: process.env.QDRANT_URL,
+  collectionName: "grocery-store",
+});
 
-  const upload_pdf = async () => {
-    const pdfPath = "./knowledge.pdf";
-    const buffer = fs.readFileSync(pdfPath);
-    const pdfResult = new PDFParse({ data: buffer });
-    const result = await pdfResult.getText();
-    const text = result.text;
+const upload_pdf = async () => {
+  const pdfPath = "./knowledge.pdf"; // location of pdf
+  const buffer = fs.readFileSync(pdfPath); // converts text into bytes(00011,100...)
+  const pdfResult = new PDFParse({ data: buffer }); // prepare to extract text
+  const result = await pdfResult.getText(); // extract the text ,it reads every page
+  const text = result.text; // the actual text(only)
 
-    const splitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-    });
-    const docs = await splitter.createDocuments([text]);
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 1000,
+  }); // llm cannot process huge document data efficiently ---> poor retrieval
+  // small chunks ---->  better retrieval
+  const docs = await splitter.createDocuments([text]); // the chunks get stored in array
+  // and all were stored in docs
+  const vector = await vectorStore.addDocuments(docs);
 
-    const vector = await vectorStore.addDocuments(docs);
-
-    console.log(vector);
-  };
-  upload_pdf();
+  console.log("document uploaded successfully");
+};
+upload_pdf();
 
 app.post("/ai", async (req, res) => {
   const { input } = req.body;
   const docs = await vectorStore.similaritySearch(input);
-  const context = docs.map((d) => d.pageContent).join("/n");
+  const context = docs.map((d) => d.pageContent).join("\n");
 
   const response = await llm.invoke([
     new SystemMessage(`
@@ -77,10 +78,10 @@ app.post("/ai", async (req, res) => {
       context : ${context}
       
       `),
-    HumanMessage(input),
+    new HumanMessage(input),
   ]);
 
-  return res.status(200).json({ ai: context });
+  return res.status(200).json({ ai: response.content });
 });
 
 app.get("/", (req, res) => {
