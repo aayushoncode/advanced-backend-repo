@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDb from "./config/db.js";
 import dns, { setServers } from "dns";
 import userRoutes from "./routes/user.js";
+import { createClient } from "redis";
 
 dotenv.config();
 
@@ -10,6 +11,22 @@ dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 await connectDb();
 
+const redis_url = process.env.REDIS_URL;
+
+if (!redis_url) {
+  console.log("redis url is missing");
+  process.exit(1); 
+}
+
+export const redis_client = createClient({
+  url: redis_url,
+});
+
+
+redis_client
+  .connect()
+  .then(() => console.log("redis connected"))
+  .catch(console.error);
 const app = express();
 
 const port = process.env.PORT || 5000;
