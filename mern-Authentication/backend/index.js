@@ -15,13 +15,12 @@ const redis_url = process.env.REDIS_URL;
 
 if (!redis_url) {
   console.log("redis url is missing");
-  process.exit(1); 
+  process.exit(1);
 }
 
 export const redis_client = createClient({
   url: redis_url,
 });
-
 
 redis_client
   .connect()
