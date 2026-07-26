@@ -7,7 +7,13 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import sendMail from "../config/sendMail.js";
 import { getOtpHtml, getVerifyEmailHtml } from "../config/html.js";
-import { generateToken } from "../config/generateToken.js";
+import {
+  generateAccessToken,
+  generateToken,
+  revokeRefreshToken,
+  verifyRefreshToken,
+} from "../config/generateToken.js";
+import { RedisClient } from "redis";
 
 export const registerUser = TryCatch(async (req, res) => {
   const sanitizedBody = sanitize(req.body);
@@ -51,7 +57,7 @@ export const registerUser = TryCatch(async (req, res) => {
 
   if (existingUser) {
     return res.status(400).json({
-      message: "too many request, try again later",
+      message: "user already exist",
     });
   }
 
@@ -261,5 +267,52 @@ export const verify_otp = TryCatch(async (req, res) => {
     message: `welcome : ${user.name}`,
     user,
     tokenData,
+  });
+});
+
+export const myProfile = TryCatch(async (req, res) => {
+  const userProfile = req.user;
+
+  res.status(200).json({
+    user: userProfile,
+  });
+});
+
+export const refreshToken = TryCatch(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: "invalid refresh token",
+    });
+  }
+
+  const decode = await verifyRefreshToken(refreshToken);
+
+  if (!decode) {
+    return res.status(401).json({
+      message: "invalid Refresh token456",
+    });
+  }
+
+  await generateAccessToken(decode.id, res);
+
+  res.status(200).json({
+    message: "token refreshed",
+  });
+});
+
+export const logOut = TryCatch(async (req, res) => {
+  const userId = req.user._id;
+
+  await revokeRefreshToken(userId);
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+
+  await redis_client.del(`user:${userId}`);
+
+  res.json({
+    message: "user logOut successfully",
   });
 });
