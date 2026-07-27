@@ -12,12 +12,9 @@ dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 await connectDb();
 
-const redis_url = process.env.REDIS_URL;
+const redis_url = process.env.REDIS_URL; // from upsatash
 
-if (!redis_url) {
-  console.log("redis url is missing");
-  process.exit(1);
-}
+
 
 export const redis_client = createClient({
   url: redis_url,
@@ -35,12 +32,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/v1", userRoutes);
-
-// app.get("/", (req, res) => {
-//   res.status(200).json({
-//     message: "hi this ayush ",
-//   });
-// });
 
 app.listen(port, () => {
   console.log(`this port is running on port : ${port}`);
