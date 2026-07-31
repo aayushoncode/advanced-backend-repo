@@ -1,7 +1,7 @@
 import React from "react";
 
-const home = () => {
-  return <div>here we register users</div>;
+const Home = () => {
+  return <div className="bg-red-500 h-50vh w-full">jkdfjsff</div>;
 };
 
-export default home;
+export default Home;

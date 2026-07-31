@@ -1,7 +1,44 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Verify from "./pages/Verify.jsx";
+import VerifyOtp from "./pages/VerifyOtp.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
 
 const App = () => {
-  return <div className="text-white flex justify-center items-center mt-60 text-4xl">this is app</div>;
+  return (
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/verifyOtp" element={<VerifyOtp />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 };
 
 export default App;
+
+// import React from "react";
+
+// const App = () => {
+//   return (
+//     <div>
+//       <BrowserRouter>
+//         djkfj
+//         <Routes>
+//           <Route />
+//         </Routes>
+//       </BrowserRouter>
+//     </div>
+//   );
+// };
+
+// export default App;
