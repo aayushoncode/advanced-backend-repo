@@ -6,6 +6,7 @@ import Register from "./pages/Register.jsx";
 import Verify from "./pages/Verify.jsx";
 import VerifyOtp from "./pages/VerifyOtp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
   return (
@@ -19,9 +20,11 @@ const App = () => {
           <Route path="/verifyOtp" element={<VerifyOtp />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
+        <ToastContainer />
       </BrowserRouter>
     </div>
   );
+  s;
 };
 
 export default App;

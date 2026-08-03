@@ -86,6 +86,8 @@ export const registerUser = TryCatch(async (req, res) => {
 
   await redis_client.set(rateLimitKey, "true", { EX: 60 });
 
+  await localStorage.setItem("verify-token", verifyToken);
+
   res.json({
     message:
       "if your email is valid, a verification link has been sent. it will expire in 5 min",
@@ -219,8 +221,7 @@ export const loginUser = TryCatch(async (req, res) => {
   await redis_client.set(rateLimitKey, "true", { EX: 60 });
 
   res.json({
-    message:
-      "if your email is valid, an otp  has been sent. it will expire in 5 min",
+    message: "otp sent  . it will expire in 5 min",
   });
 });
 

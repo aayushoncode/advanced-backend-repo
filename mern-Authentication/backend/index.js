@@ -5,7 +5,7 @@ import dns, { setServers } from "dns";
 import userRoutes from "./routes/user.js";
 import { createClient } from "redis";
 import cookieParser from "cookie-parser";
-
+import cors from "cors";
 dotenv.config();
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -13,8 +13,6 @@ dns.setServers(["8.8.8.8", "1.1.1.1"]);
 await connectDb();
 
 const redis_url = process.env.REDIS_URL; // from upsatash
-
-
 
 export const redis_client = createClient({
   url: redis_url,
@@ -30,6 +28,13 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS "],
+  }),
+);
 
 app.use("/api/v1", userRoutes);
 
