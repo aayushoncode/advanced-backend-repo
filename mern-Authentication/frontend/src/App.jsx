@@ -19,6 +19,7 @@ const App = () => {
           <Route path="/verify" element={<Verify />} />
           <Route path="/verifyOtp" element={<VerifyOtp />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
         <ToastContainer />
       </BrowserRouter>

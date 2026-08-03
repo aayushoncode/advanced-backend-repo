@@ -18,11 +18,15 @@ const register = () => {
     console.log(email, password);
 
     try {
-      const { data } = await axios.post(`${server}/api/v1/register`, {
-        name,
-        email,
-        password,
-      });
+      const { data } = await axios.post(
+        `${server}/api/v1/register`,
+        {
+          name,
+          email,
+          password,
+        },
+        { withCredentials: true },
+      );  
 
       await toast.success(data.message);
 

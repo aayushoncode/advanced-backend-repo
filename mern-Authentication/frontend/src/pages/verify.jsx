@@ -13,6 +13,7 @@ const Verify = () => {
   const [verifyBtn, setverifyBtn] = useState(false);
 
   const storedEmail = localStorage.getItem("email");
+  const navigate = useNavigate();
 
   const handleOtp = async (e) => {
     e.preventDefault();
@@ -20,12 +21,19 @@ const Verify = () => {
     console.log(email, otp);
 
     try {
-      const { data } = await axios.post(`${server}/api/v1/verify`, {
-        email: storedEmail,
-        otp: Number(otp),
-      });
+      const { data } = await axios.post(
+        `${server}/api/v1/verify`,
+        {
+          email: storedEmail,
+          otp: Number(otp),
+        },
+        { withCredentials: true },
+      );
 
-      toast.success(data.message);
+      await toast.success(data.message);
+      localStorage.clear("email");
+
+      navigate("/")
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
