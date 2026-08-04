@@ -13,7 +13,7 @@ export const generateToken = async (id, res) => {
   }
 
   const accessToken = jwt.sign({ id }, jwtSecret, {
-    expiresIn: "15m",
+    expiresIn: "1m",
   });
 
   const refreshToken = jwt.sign({ id }, refreshSecret, {
@@ -28,7 +28,7 @@ export const generateToken = async (id, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 15 * 60 * 1000,
+    maxAge: 1 * 60 * 1000,
   });
 
   res.cookie("refreshToken", refreshToken, {

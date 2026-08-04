@@ -1,6 +1,8 @@
 import { server } from "@/main";
 import axios from "axios";
-import { Children, createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
+import api from "../apiInterceptor";
 
 const AppContext = createContext(null);
 
@@ -13,9 +15,7 @@ export const AppProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const { data } = await axios.get(`${server}/api/v1/me`, {
-        withCredentials: true,
-      });
+      const { data } = await api.get(`${server}/api/v1/me`);
 
       setUser(data);
       setIsAuth(true);
@@ -25,6 +25,10 @@ export const AppProvider = ({ children }) => {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   return (
     <AppContext.Provider

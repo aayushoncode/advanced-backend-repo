@@ -1,4 +1,4 @@
-import { AiWebBrowsingFreeIcons } from "@hugeicons/core-free-icons";
+// import { AiWebBrowsingFreeIcons } from "@hugeicons/core-free-icons";
 import axios from "axios";
 
 const server = "http://localhost:8000";

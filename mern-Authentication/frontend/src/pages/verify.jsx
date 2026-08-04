@@ -6,6 +6,8 @@ import AnimatedOTPInput from "@/components/smoothui/animated-o-t-p-input";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import api from "../apiInterceptor.js";
+import { AppData } from "../context/AppContext";
 
 const Verify = () => {
   const [otp, setOtp] = useState();
@@ -15,13 +17,15 @@ const Verify = () => {
   const storedEmail = localStorage.getItem("email");
   const navigate = useNavigate();
 
+  const { fetchUser } = AppData();
+
   const handleOtp = async (e) => {
     e.preventDefault();
     setverifyBtn(true);
     console.log(email, otp);
 
     try {
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `${server}/api/v1/verify`,
         {
           email: storedEmail,
@@ -33,7 +37,9 @@ const Verify = () => {
       await toast.success(data.message);
       localStorage.clear("email");
 
-      navigate("/")
+      await fetchUser();
+
+      // navigate("/")
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

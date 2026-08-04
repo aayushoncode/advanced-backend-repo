@@ -26,7 +26,7 @@ const register = () => {
           password,
         },
         { withCredentials: true },
-      );  
+      );
 
       await toast.success(data.message);
 
