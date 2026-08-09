@@ -17,7 +17,7 @@ const VerifyOtp = () => {
   const storedEmail = localStorage.getItem("email");
   const navigate = useNavigate();
 
-  const { fetchUser } = AppData();
+  const { fetchUser, setIsAuth, setUser } = AppData();
 
   const handleOtp = async (e) => {
     e.preventDefault();
@@ -36,11 +36,14 @@ const VerifyOtp = () => {
 
       toast.success(data.message);
       setOtp(null);
+      setIsAuth(true);
+      setUser(data.user);
+
       localStorage.clear("email");
 
       await fetchUser();
 
-      navigate("/ ");
+      navigate("/");
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

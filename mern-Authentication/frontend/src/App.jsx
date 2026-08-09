@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import Loading from "./Loading.jsx";
 import { AppData } from "./context/AppContext.jsx";
 import LogOut from "./pages/LogOut.jsx";
+import MyProfile from "./pages/MyProfile.jsx";
 
 const App = () => {
   const { isAuth, loading } = AppData();
@@ -34,7 +35,7 @@ const App = () => {
             />
             <Route path="/verify" element={isAuth ? <Home /> : <Verify />} />x
             <Route path="/logout" element={<LogOut />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/MyProfile" element={<MyProfile />} />
             {/* <Route path="/loading" element={<Loading />} /> */}
           </Routes>
           <ToastContainer />
@@ -42,7 +43,6 @@ const App = () => {
       )}
     </>
   );
-  s;
 };
 
 export default App;

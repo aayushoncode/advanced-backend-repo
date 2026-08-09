@@ -65,7 +65,7 @@ export const generateAccessToken = async (id, res) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     // secure: true,
-    sameSite: "strict",
+    sameSite: "none",
     maxAge: 1 * 60 * 1000,
   });
 };
