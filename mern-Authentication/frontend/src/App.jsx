@@ -7,23 +7,40 @@ import Verify from "./pages/Verify.jsx";
 import VerifyOtp from "./pages/VerifyOtp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import { ToastContainer } from "react-toastify";
+import Loading from "./Loading.jsx";
+import { AppData } from "./context/AppContext.jsx";
+import LogOut from "./pages/LogOut.jsx";
 
 const App = () => {
+  const { isAuth, loading } = AppData();
+
   return (
-    <div>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/Login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/verify" element={<Verify />} />
-          <Route path="/verifyOtp" element={<VerifyOtp />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-        <ToastContainer />
-      </BrowserRouter>
-    </div>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={isAuth ? <Home /> : <Login />} />
+            {/* <Route path="/" element={<Home />} /> */}
+            <Route path="/Login" element={isAuth ? <Home /> : <Login />} />
+            <Route
+              path="/register"
+              element={isAuth ? <Home /> : <Register />}
+            />
+            <Route
+              path="/verifyOtp"
+              element={isAuth ? <Home /> : <VerifyOtp />}
+            />
+            <Route path="/verify" element={isAuth ? <Home /> : <Verify />} />x
+            <Route path="/logout" element={<LogOut />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            {/* <Route path="/loading" element={<Loading />} /> */}
+          </Routes>
+          <ToastContainer />
+        </BrowserRouter>
+      )}
+    </>
   );
   s;
 };

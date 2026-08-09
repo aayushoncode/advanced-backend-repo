@@ -3,6 +3,7 @@ import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 
 import api from "../apiInterceptor";
+import { toast } from "react-toastify";
 
 const AppContext = createContext(null);
 
@@ -26,6 +27,18 @@ export const AppProvider = ({ children }) => {
     }
   }
 
+  async function logoutUser() {
+    try {
+      const { data } = await api.post("/api/v1/logout");
+
+      toast.success(data.message);
+      setIsAuth(false);
+      setUser(null);
+    } catch (error) {
+      toast.error("something went wrong");
+    }
+  }
+
   useEffect(() => {
     fetchUser();
   }, []);
@@ -40,6 +53,7 @@ export const AppProvider = ({ children }) => {
         loading,
         setLoading,
         fetchUser,
+        logoutUser,
       }}
     >
       {children}

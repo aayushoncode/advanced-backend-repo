@@ -27,7 +27,7 @@ const Login = () => {
 
       localStorage.setItem("email", email);
 
-      navigate("/verify");
+      navigate("/verifyOtp");
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
